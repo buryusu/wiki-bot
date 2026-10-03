@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "WikiMasters Pack Hunter",
-  "version": "3.0.4",
-  "description": "WikiMasters Pack Hunter v3.0.4 - inscription auto, rotation, gate auto, suivi des comptes et changement automatique après épuisement des packs.",
+  "version": "3.1.0",
+  "description": "WikiMasters Pack Hunter v3.1.0 - dashboard de collection, inscription auto, boucle infinie, gate auto, suivi des comptes.",
   "permissions": ["storage","windows","tabs","downloads","browsingData"],
   "host_permissions": [
     "https://www.wiki-masters.com/*",

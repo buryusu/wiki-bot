@@ -1,5 +1,5 @@
 const $ = s => document.querySelector(s);
-const DEFAULTS = {enabled:true,pollMs:120,actionDelay:250,viewDelay:180,retryDelay:500,navigationDelay:150,emailPollMs:500,emailFillDelay:150,signupFillDelay:150,signupSubmitDelay:150,signupButtonPollMs:75,signupButtonTimeoutMs:15000,otpSubmitDelay:150,autoStartupGate:true,autoSignup:true,autoSwitch:false,signupResultTimeoutMs:20000,signupResultPollMs:250,usernameMinLength:3,usernameMaxLength:24};
+const DEFAULTS = {enabled:true,pollMs:120,actionDelay:250,viewDelay:180,retryDelay:500,navigationDelay:150,emailPollMs:500,emailFillDelay:150,signupFillDelay:150,signupSubmitDelay:150,signupButtonPollMs:75,signupButtonTimeoutMs:15000,otpSubmitDelay:150,autoStartupGate:true,autoSignup:true,autoSwitch:false,autoCloseAndRestart:false,signupResultTimeoutMs:20000,signupResultPollMs:250,usernameMinLength:3,usernameMaxLength:24};
 let currentSettings = Object.assign({}, DEFAULTS);
 async function activeTab() {
   const t = await chrome.tabs.query({active:true,currentWindow:true});
@@ -18,7 +18,7 @@ function updateInputs() {
     if (!el || !out) continue;
     el.value = currentSettings[k]; out.textContent = currentSettings[k];
   }
-  for (const k of ["autoStartupGate","autoSignup","autoSwitch"]) {
+  for (const k of ["autoStartupGate","autoSignup","autoSwitch","autoCloseAndRestart"]) {
     const el = $("#" + k); if (el) el.checked = !!currentSettings[k];
   }
 }
@@ -63,7 +63,7 @@ for (const k of sliderKeys) {
     try { await send("updateSettings", {settings:{[k]: currentSettings[k]}}); } catch (err) {}
   });
 }
-for (const k of ["autoStartupGate","autoSignup","autoSwitch"]) {
+for (const k of ["autoStartupGate","autoSignup","autoSwitch","autoCloseAndRestart"]) {
   const el = $("#" + k);
   if (!el) continue;
   el.addEventListener("change", async e => {
@@ -126,6 +126,10 @@ $("#exportCSV").addEventListener("click", async () => {
     chrome.downloads.download({url, filename: "wmph-accounts-" + new Date().toISOString().slice(0, 10) + ".csv", saveAs: true});
     status.textContent = "Export CSV lancé.";
   } catch (e) { status.textContent = "Erreur export CSV."; }
+});
+$("#viewCollection").addEventListener("click", () => {
+  chrome.tabs.create({ url: "viewer.html" });
+  window.close();
 });
 $("#clearAccounts").addEventListener("click", async () => {
   const status = $("#accountsStatus");

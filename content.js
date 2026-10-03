@@ -7,7 +7,7 @@
     enabled:true, pollMs:120, actionDelay:250, viewDelay:180, retryDelay:500,
     navigationDelay:150, signupFillDelay:150, signupSubmitDelay:150,
     signupButtonPollMs:75, signupButtonTimeoutMs:15000, otpSubmitDelay:150,
-    autoStartupGate:true, autoSignup:true, signupResultTimeoutMs:20000,
+    autoStartupGate:true, autoSignup:true, autoSwitch:false, autoCloseAndRestart:false, signupResultTimeoutMs:20000,
     signupResultPollMs:250, usernameMinLength:3, usernameMaxLength:24
   };
   var settings = Object.assign({}, DEFAULTS);
@@ -243,6 +243,7 @@
           Date.now() - noOpenButtonSince >= Math.max(1500, (Number(settings.retryDelay) || 500) * 4);
         var noPacksConfirmed = noPacksNow || emptyAfterCompletedPacks;
         setStatus(noPacksConfirmed ? "Aucun pack disponible" : "Recherche d'un pack...");
+        if (noPacksConfirmed && settings.autoCloseAndRestart) { triggerAutoCloseAndRestart(); break; }
         if (noPacksConfirmed && settings.autoSwitch) { triggerAutoSwitch(); break; }
         await sleep(settings.retryDelay);
       }
@@ -665,6 +666,13 @@
     } catch (e) {}
     // Cooldown to avoid spam: 30 seconds
     setTimeout(function () { autoSwitchCooldown = false; }, 30000);
+  }
+
+  async function triggerAutoCloseAndRestart() {
+    setStatus("Fermeture et relance...");
+    try {
+      await chrome.runtime.sendMessage({ type: "wmph_auto_close_restart" });
+    } catch (e) {}
   }
 
   async function init() {

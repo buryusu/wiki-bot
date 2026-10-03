@@ -221,6 +221,30 @@ chrome.runtime.onMessage.addListener((msg, _sender, send) => {
   return true;
 });
 
+// ── Auto-close and restart (infinite loop) ──────────────────────────────────
+chrome.runtime.onMessage.addListener((msg, _sender, send) => {
+  if (!msg || msg.type !== "wmph_auto_close_restart") return;
+  (async () => {
+    try {
+      const d = await chrome.storage.local.get(["wmph_settings"]);
+      const settings = d.wmph_settings || {};
+      if (!settings.autoCloseAndRestart) { send({ ok: false, reason: "disabled" }); return; }
+      
+      // Close all incognito windows
+      await closeAllIncognitoWindows();
+      
+      // Wait a bit to ensure cleanup is done
+      await sleep(1000);
+      
+      // Create a new incognito window, which will trigger onCreated and start the process
+      await chrome.windows.create({incognito: true});
+      
+      send({ ok: true });
+    } catch (e) { send({ ok: false, error: String(e) }); }
+  })();
+  return true;
+});
+
 chrome.windows.onCreated.addListener(w => {
   if (w && w.incognito) { handledWindows.delete(w.id); setTimeout(() => openPrivateTabs(w.id), 250); }
 });

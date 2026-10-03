@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pack Hunter - Collection</title>
+  <link rel="stylesheet" href="viewer.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1>✨ Collection Pack Hunter</h1>
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Rechercher une carte par nom...">
+        <div class="stats" id="statsDisplay">Chargement...</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div id="cardsGrid" class="cards-grid">
+      <!-- Cards will be injected here -->
+    </div>
+    <div id="noResults" class="hidden">
+      <p>Aucune carte trouvée.</p>
+    </div>
+  </main>
+
+  <div id="accountModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Détails de l'obtention</h2>
+        <button id="closeModal" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Account details will be injected here -->
+      </div>
+    </div>
+  </div>
+
+  <script src="storage.js"></script>
+  <script src="viewer.js"></script>
+</body>
+</html>
